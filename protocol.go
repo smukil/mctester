@@ -341,6 +341,7 @@ func (c *Client) Get(key string) (flags uint64, value []byte, code McCode, err e
 			parts := bytes.Split(line[:len(line)-2], []byte(" "))
 			if !bytes.Equal(parts[0], []byte("VALUE")) {
 				// TODO: This should look for ERROR/SERVER_ERROR/etc
+				fmt.Println("unexpected response from server: %s" string(bytes))
 				return ErrUnexpectedResponse
 			}
 			if len(parts) != 4 {
@@ -349,6 +350,7 @@ func (c *Client) Get(key string) (flags uint64, value []byte, code McCode, err e
 			if !bytes.Equal(parts[1], []byte(key)) {
 				// FIXME: how do we embed the received vs expected in here?
 				// use the brand-new golang error wrapping thing?
+				fmt.Printf("Got %s instead of %s\n", string(parts[1]), string(key))
 				return ErrKeyDoesNotMatch
 			}
 			flags, _ = ParseUint(parts[2])
